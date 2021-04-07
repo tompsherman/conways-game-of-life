@@ -1,5 +1,16 @@
 # conways-game-of-life
 
+## Conway's Game of Life
+
+Life, like binary, has two choices: life or death. Conway's game of life is a 0 player game, meaning once the initial input is set, the only thing that can occur is the observation of the evolution of the system itself.
+
+Life, also like binary, has rules:
+
+1. any live cell with less than 2 neighbors dies.
+2. any live cell with 2 or 3 neighbors lives.
+3. any live cell with more than 3 neighbors dies.
+4. any dead cell with exactly 3 neighbors lives.
+
 ### Preliminary Work
 
 - Research Conway’s "Game of Life". Figure out how it works, why it’s
@@ -55,14 +66,16 @@ Write an algorithm that:
 
 Implement at least 3 of the following features:
 
-- Create a few sample cell configurations that users can load and run
-- Add an option that creates a random cell configuration that users can
-  run
 - Add additional cell properties, like color or size, and incorporate
   them into your visualization
 - Allow users to specify the speed of the simulation
 - Provide functionality to manually step through the simulation one
   generation at a time, as opposed to animating automatically
+
+- Create a few sample cell configurations that users can load and run
+- Add an option that creates a random cell configuration that users can
+  run
+
 - Allow users to change the dimension of the grid being displayed
 - Given a specific generation, calculate the configuration of cells at
   that point in time, and jump to that state, bypassing animation (i.e.

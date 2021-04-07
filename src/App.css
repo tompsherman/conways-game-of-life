@@ -7,6 +7,18 @@
   pointer-events: none;
 }
 
+.grid {
+  border: 2px solid black;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cell-state {
+  border: 1px solid purple;
+  width: 3.75%;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
