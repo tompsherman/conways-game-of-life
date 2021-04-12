@@ -1,34 +1,53 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useState } from 'react'
 import GridSquare from "./GridSquare"
 import { GridContext } from "./context/GridContext"
+import GameLogic from "./GameLogic"
+import { clone } from "ramda"
 
 const Grid = () => {
-    const { setStartingGrid } = useContext(GridContext)
+    const [toggle, setToggle] = useState(false)
 
-    let items = []
+    let grid = []
     let row = 0
     let column = 0
 
-    while (row < 25) {
-        for (column = 0; column < 25; column++){
-            items.push({
-                row: row,
-                column: column,
-                living: false
-            })
+    while (row < 10) {
+        for (column = 0; column < 10; column++){
+            if ((row === 4 && column === 5) ||
+                (row === 5 && column === 5) ||
+                (row === 6 && column === 5)) {
+                grid.push({
+                    row: row,
+                    column: column,
+                    living: 1,
+                    visited: 0
+                })
+            } else {
+                grid.push({
+                    row: row,
+                    column: column,
+                    living: 0,
+                    visited: 0
+                })
+            }
         }
         row += 1
     }
 
-    useEffect(()=>{
-        console.log("updated")
-        setStartingGrid(items)
-    }, [])
+    const newGrid = clone(grid)
+   
+    const handeClick = (event) => {
+        event.preventDefault()
+        setToggle(true)
+    }
 
     return (
         <>
             <h1>Grid:</h1>
-            < GridSquare />
+            <button onClick={handeClick}>run simulation</button>
+            <div>
+                {toggle ? <GameLogic grid={grid} newGrid={newGrid} /> : null}
+            </div>
         </>
         // <div className="grid">
         //     {array.map(row =>
