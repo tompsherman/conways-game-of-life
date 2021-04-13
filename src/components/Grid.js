@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { clone, times } from "ramda"
+import { clone } from "ramda"
 import "../styles/Grid.css"
 import Controls from "./Controls"
 
@@ -14,9 +14,13 @@ class Grid extends Component {
             seededGrid: false,
         }
     }
-
+    
     gridReset = () => {
+        console.log("interval id 1:", this.intervalId)
+
         clearInterval(this.intervalId)
+        console.log("interval id 2:", this.intervalId)
+
         let startBlank = []
         let column = 0
         let row = 0
@@ -56,7 +60,8 @@ class Grid extends Component {
 
     runProgram = (event) => {
         event.preventDefault()
-        console.log("running program...")
+        console.log("running program...", this.intervalId)
+        console.log("interval id:", this.intervalId)
 
         let newGrid = clone(this.state.grid)
 
@@ -91,8 +96,10 @@ class Grid extends Component {
 
             if (numberLiving >= 2 && numberLiving <= 3 && this.state.grid[index].living === 1){
                 newGrid[index] = { ...newGrid[index], living: 1 }
-            } else if (numberLiving === 3 && this.state.grid[index].living === 0){
+            } else if ((numberLiving === 3 && this.state.grid[index].living === 0) || (numberLiving === 3 && this.state.grid[index].living === 2)){
                 newGrid[index] = { ...newGrid[index], living: 1 }
+            } else if (this.state.grid[index].living === 1){
+                newGrid[index] = { ...newGrid[index], living: 2 }
             } else {
                 newGrid[index] = { ... newGrid[index], living: 0 }
             }
@@ -105,14 +112,16 @@ class Grid extends Component {
 
     handleClick = (event, node) => {
         event.preventDefault()
-        let index = node.row * this.width + node.column
-        let updateGrid = this.state.grid
+        // if (!this.intervalId){
+            let index = node.row * this.width + node.column
+            let updateGrid = this.state.grid
 
-        updateGrid[index] = 
-            node.living === 1 ? { ...node, living: 0 } : { ...node, living: 1}
-            this.setState({
-                grid: updateGrid
-            })
+            updateGrid[index] = 
+                node.living === 1 ? { ...node, living: 0 } : { ...node, living: 1}
+                this.setState({
+                    grid: updateGrid
+                })
+        // }
     }
 
     playContinuous = (event) => {
@@ -175,7 +184,7 @@ class Grid extends Component {
                             <button
                                 onClick={(event) => this.handleClick(event, node)}
                                 key={index}
-                                className={node.living ? "cell-living" : "cell"}
+                                className={node.living === 1 ? "cell-living" : node.living === 2 ? "just-died" : "cell"}
                             ></button>
                         )
                     })}
