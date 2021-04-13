@@ -1,0 +1,20 @@
+.controls-container {
+  margin-top: 5%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 625px;
+}
+
+.buttons {
+  padding: 1.5%;
+  background-color: grey;
+  color: white;
+  border-radius: 1%;
+  border: black;
+  box-shadow: 1px 1px 2px black;
+}
+
+.buttons:hover {
+  background-color: rgb(163, 115, 44);
+}

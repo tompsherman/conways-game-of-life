@@ -1,64 +1,203 @@
-import React, { useState } from 'react'
-import GridSquare from "./GridSquare"
-import { GridContext } from "./context/GridContext"
-import GameLogic from "./GameLogic"
-import { clone } from "ramda"
+import React, { Component } from 'react'
+import { clone, times } from "ramda"
+import "../styles/Grid.css"
+import Controls from "./Controls"
 
-const Grid = () => {
-    const [toggle, setToggle] = useState(false)
+class Grid extends Component {
+    constructor(props) {
+        super(props);
+        this.width = 25;
+        this.height = 25;
+        this.state = {
+            grid: Array(this.width * this.height).fill({}),
+            speed: 0,
+            seededGrid: false,
+        }
+    }
 
-    let grid = []
-    let row = 0
-    let column = 0
+    gridReset = () => {
+        clearInterval(this.intervalId)
+        let startBlank = []
+        let column = 0
+        let row = 0
 
-    while (row < 10) {
-        for (column = 0; column < 10; column++){
-            if ((row === 4 && column === 5) ||
-                (row === 5 && column === 5) ||
-                (row === 6 && column === 5)) {
-                grid.push({
-                    row: row,
-                    column: column,
-                    living: 1,
-                    visited: 0
-                })
+        while (row < this.width){
+            console.log("grid in gridreset:", this.state.seededGrid)
+
+            if(this.state.seededGrid){
+                for(column = 0; column < this.height; column++){
+                    startBlank.push({
+                        row: row,
+                        column: column,
+                        living: Math.floor(Math.random() * 4 === 1 ? 1 : 0)
+                    })
+                }
+                row += 1
             } else {
-                grid.push({
-                    row: row,
-                    column: column,
-                    living: 0,
-                    visited: 0
-                })
+                for (column = 0; column < this.height; column++){
+                    startBlank.push({
+                        row: row,
+                        column: column,
+                        living: 0
+                    })
+                }
+                row += 1
             }
         }
-        row += 1
+        this.setState({grid: startBlank})
     }
 
-    const newGrid = clone(grid)
-   
-    const handeClick = (event) => {
+    componentDidMount(){
+        this.gridReset()
+        this.setState({
+            speed: 1000
+        })
+    }
+
+    runProgram = (event) => {
         event.preventDefault()
-        setToggle(true)
+        console.log("running program...")
+
+        let newGrid = clone(this.state.grid)
+
+        this.state.grid.map((node) => {
+            let numberLiving = 0
+            if (node.row > 0 && this.state.grid[(node.row - 1) * this.width + node.column].living === 1){
+                numberLiving += 1
+            }
+            if (node.row > 0 && node.column < this.width -1 && this.state.grid[(node.row - 1) * this.width + node.column + 1].living === 1){
+                numberLiving += 1
+            }
+            if (node.column < this.width -1 && this.state.grid[node.row * this.width + node.column + 1].living === 1){
+                numberLiving += 1
+            }
+            if (node.row < this.width -1 && node.column < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column + 1].living === 1){
+                numberLiving += 1
+            }
+            if (node.row < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column].living === 1){
+                numberLiving += 1
+            }
+            if (node.row < this.width -1 && node.column > 0 && this.state.grid[(node.row + 1) * this.width + (node.column - 1)].living === 1){
+                numberLiving += 1
+            }
+            if (node.column > 0 && this.state.grid[node.row * this.width + (node.column - 1)].living === 1){
+                numberLiving += 1
+            }
+            if (node.row > 0 && node.column > 0 && this.state.grid[(node.row - 1) * this.width + (node.column - 1)].living === 1){
+                numberLiving += 1
+            }
+
+            let index = node.row * this.width + node.column
+
+            if (numberLiving >= 2 && numberLiving <= 3 && this.state.grid[index].living === 1){
+                newGrid[index] = { ...newGrid[index], living: 1 }
+            } else if (numberLiving === 3 && this.state.grid[index].living === 0){
+                newGrid[index] = { ...newGrid[index], living: 1 }
+            } else {
+                newGrid[index] = { ... newGrid[index], living: 0 }
+            }
+            return this.state.grid
+        })
+        this.setState({
+            grid: newGrid
+        })
     }
 
-    return (
-        <>
-            <h1>Grid:</h1>
-            <button onClick={handeClick}>run simulation</button>
-            <div>
-                {toggle ? <GameLogic grid={grid} newGrid={newGrid} /> : null}
-            </div>
-        </>
-        // <div className="grid">
-        //     {array.map(row =>
-        //         row.map(cell =>
-        //             <div className="cell-state" onClick={makeAlive}>
-        //                 {cell}
-        //             </div>
-        //         )
-        //     )}
-        // </div>
-    )
+    handleClick = (event, node) => {
+        event.preventDefault()
+        let index = node.row * this.width + node.column
+        let updateGrid = this.state.grid
+
+        updateGrid[index] = 
+            node.living === 1 ? { ...node, living: 0 } : { ...node, living: 1}
+            this.setState({
+                grid: updateGrid
+            })
+    }
+
+    playContinuous = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+        this.intervalId = setInterval(()=>{
+            this.runProgram(event)
+        }, this.state.speed)
+    }
+
+    pause = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+    }
+
+    slower = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+        this.setState((prevState) => ({
+            speed: prevState.speed * 1.2
+        }))
+        this.playContinuous(event)
+    }
+
+    faster = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+        this.setState((prevState) => ({
+            speed: prevState.speed * 0.7
+        }))
+        this.playContinuous(event)
+    }
+
+    seededGrid = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+        console.log("grid seeded in seed funciton:", this.state.seededGrid)
+        this.setState({
+            seededGrid: true
+        })
+    }
+
+    unseededGrid = (event) => {
+        event.preventDefault()
+        clearInterval(this.intervalId)
+        this.setState({
+            seededGrid: false
+        })
+        this.gridReset()
+    }
+
+    render(){
+        return (
+            <>
+                <h1>Conway's Game of Life!</h1>
+
+                <div className="grid-container">
+                    {this.state.grid.map((node, index) => {
+                        return (
+                            <button
+                                onClick={(event) => this.handleClick(event, node)}
+                                key={index}
+                                className={node.living ? "cell-living" : "cell"}
+                            ></button>
+                        )
+                    })}
+                </div>
+                <div>
+                    <Controls 
+                        runProgram={this.runProgram}
+                        gridReset={this.gridReset}
+                        speed={this.speed}
+                        intervalId={this.intervalId}
+                        playContinuous={this.playContinuous}
+                        slower={this.slower}
+                        faster={this.faster}
+                        seededGrid={this.seededGrid}
+                        unseededGrid={this.unseededGrid}
+                        pause={this.pause}
+                    />
+                </div>
+            </>
+        )
+    }
+    
 }
 
 export default Grid

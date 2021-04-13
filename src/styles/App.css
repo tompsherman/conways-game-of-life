@@ -1,39 +1,9 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.grid {
-  border: 2px solid black;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.cell-state {
-  border: 1px solid purple;
-  width: 3.75%;
-}
-
-.box-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 725px;
-  height: 725px;
-  border: 2px solid green;
-}
-
-.box {
-  width: 25px;
-  height: 25px;
-  /* flex: 1 1 2.3%; */
-  /* flex-grow: 1; */
-  border: 2px solid red;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 10%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
