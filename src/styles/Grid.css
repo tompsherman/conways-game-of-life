@@ -20,7 +20,7 @@
   width: 4%;
   height: 4vh;
   border: 2px solid blue;
-  background-color: greenyellow;
+  background-color: green;
 }
 
 .just-died {
@@ -28,4 +28,11 @@
   height: 4vh;
   border: 2px solid yellow;
   background-color: lightcoral;
+}
+
+.new-birth {
+  width: 4%;
+  height: 4vh;
+  border: 2px solid lightblue;
+  background-color: greenyellow;
 }

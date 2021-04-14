@@ -67,38 +67,38 @@ class Grid extends Component {
 
         this.state.grid.map((node) => {
             let numberLiving = 0
-            if (node.row > 0 && this.state.grid[(node.row - 1) * this.width + node.column].living === 1){
+            if (node.row > 0 && this.state.grid[(node.row - 1) * this.width + node.column].living %2 !== 0){
                 numberLiving += 1
             }
-            if (node.row > 0 && node.column < this.width -1 && this.state.grid[(node.row - 1) * this.width + node.column + 1].living === 1){
+            if (node.row > 0 && node.column < this.width -1 && this.state.grid[(node.row - 1) * this.width + node.column + 1].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.column < this.width -1 && this.state.grid[node.row * this.width + node.column + 1].living === 1){
+            if (node.column < this.width -1 && this.state.grid[node.row * this.width + node.column + 1].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.row < this.width -1 && node.column < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column + 1].living === 1){
+            if (node.row < this.width -1 && node.column < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column + 1].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.row < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column].living === 1){
+            if (node.row < this.width -1 && this.state.grid[(node.row + 1) * this.width + node.column].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.row < this.width -1 && node.column > 0 && this.state.grid[(node.row + 1) * this.width + (node.column - 1)].living === 1){
+            if (node.row < this.width -1 && node.column > 0 && this.state.grid[(node.row + 1) * this.width + (node.column - 1)].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.column > 0 && this.state.grid[node.row * this.width + (node.column - 1)].living === 1){
+            if (node.column > 0 && this.state.grid[node.row * this.width + (node.column - 1)].living%2 !== 0){
                 numberLiving += 1
             }
-            if (node.row > 0 && node.column > 0 && this.state.grid[(node.row - 1) * this.width + (node.column - 1)].living === 1){
+            if (node.row > 0 && node.column > 0 && this.state.grid[(node.row - 1) * this.width + (node.column - 1)].living%2 !== 0){
                 numberLiving += 1
             }
 
             let index = node.row * this.width + node.column
 
-            if (numberLiving >= 2 && numberLiving <= 3 && this.state.grid[index].living === 1){
+            if ((numberLiving >= 2 && numberLiving <= 3 && this.state.grid[index].living === 1) || (numberLiving >= 2 && numberLiving <= 3 && this.state.grid[index].living === 3)){
                 newGrid[index] = { ...newGrid[index], living: 1 }
             } else if ((numberLiving === 3 && this.state.grid[index].living === 0) || (numberLiving === 3 && this.state.grid[index].living === 2)){
-                newGrid[index] = { ...newGrid[index], living: 1 }
-            } else if (this.state.grid[index].living === 1){
+                newGrid[index] = { ...newGrid[index], living: 3 }
+            } else if (this.state.grid[index].living === 1 || this.state.grid[index].living === 3){
                 newGrid[index] = { ...newGrid[index], living: 2 }
             } else {
                 newGrid[index] = { ... newGrid[index], living: 0 }
@@ -139,9 +139,10 @@ class Grid extends Component {
 
     slower = (event) => {
         event.preventDefault()
+        console.log(this.state.speed)
         clearInterval(this.intervalId)
-        this.setState((prevState) => ({
-            speed: prevState.speed * 1.2
+        this.setState(() => ({
+            speed: this.state.speed * 1.2
         }))
         this.playContinuous(event)
     }
@@ -149,8 +150,8 @@ class Grid extends Component {
     faster = (event) => {
         event.preventDefault()
         clearInterval(this.intervalId)
-        this.setState((prevState) => ({
-            speed: prevState.speed * 0.7
+        this.setState(() => ({
+            speed: this.state.speed * 0.7
         }))
         this.playContinuous(event)
     }
@@ -184,7 +185,7 @@ class Grid extends Component {
                             <button
                                 onClick={(event) => this.handleClick(event, node)}
                                 key={index}
-                                className={node.living === 1 ? "cell-living" : node.living === 2 ? "just-died" : "cell"}
+                                className={node.living === 1 ? "cell-living" : node.living === 2 ? "just-died" : node.living === 3 ? "new-birth" : "cell"}
                             ></button>
                         )
                     })}
