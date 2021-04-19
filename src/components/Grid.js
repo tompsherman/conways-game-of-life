@@ -159,7 +159,6 @@ class Grid extends Component {
     seededGrid = (event) => {
         event.preventDefault()
         clearInterval(this.intervalId)
-        console.log("grid seeded in seed funciton:", this.state.seededGrid)
         this.setState({
             seededGrid: true
         })
